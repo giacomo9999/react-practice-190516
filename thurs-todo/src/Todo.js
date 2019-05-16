@@ -29,20 +29,67 @@ class Todo extends Component {
   }
 
   onDeleteHandle(e) {
-    e.preventDefault();
+    let id = arguments[0];
+    this.setState({
+      mockData: this.state.mockData.filter(item => {
+        return item.id !== id;
+      })
+    });
   }
 
   onEditHandle(e) {
-    e.preventDefault();
+    this.setState({ edit: true, id: arguments[0], title: arguments[1] });
   }
 
-  onCompleteHandle(e) {
+  renderEditForm() {
+    if (this.state.edit) {
+      return (
+        <form onSubmit={this.onUpdateHandle.bind(this)}>
+          <input
+            type="text"
+            name="updatedItem"
+            className="item"
+            defaultValue={this.state.title}
+          />
+          <button className="update-add-item">Update</button>
+        </form>
+      );
+    }
+  }
+
+  onUpdateHandle(e) {
     e.preventDefault();
+    // console.log(e.target.updatedItem.value);
+    this.setState({
+      mockData: this.state.mockData.map(entry => {
+        console.log(entry.id === this.state.id);
+        if (entry.id === this.state.id) {
+          entry.title = e.target.updatedItem.value;
+        }
+        return entry;
+      })
+    });
+  }
+
+  onCompleteHandle() {
+    let id = arguments[0];
+    console.log(id);
+    this.setState({
+      mockData: this.state.mockData.map(entry => {
+        if (entry.id === id) {
+          entry.done = true;
+          console.log(entry.id === id);
+        }
+        return entry;
+      })
+    });
+    console.log(this.state);
   }
 
   render() {
     return (
       <div className="container">
+        {this.renderEditForm()}
         <h1>I Am The To-Do Component</h1>
         <form onSubmit={this.onSubmitHandle.bind(this)}>
           <input type="text" name="item" className="item" />
@@ -50,15 +97,17 @@ class Todo extends Component {
         </form>
         <ul>
           {this.state.mockData.map(item => (
-            <li key={item.id}>
+            <li key={item.id} className={item.done ? "done" : "hidden"}>
               {item.title}
               <button onClick={this.onDeleteHandle.bind(this, item.id)}>
                 Delete
               </button>
-              <button onClick={this.onEditHandle.bind(this, item.title)}>
+              <button
+                onClick={this.onEditHandle.bind(this, item.id, item.title)}
+              >
                 Edit
               </button>
-              <button onClick={this.onCompleteHandle.bind(this)}>
+              <button onClick={this.onCompleteHandle.bind(this,item.id)}>
                 Complete
               </button>
             </li>

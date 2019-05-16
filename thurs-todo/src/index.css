@@ -242,6 +242,10 @@ li {
   margin-bottom: 0;
 }
 
+.done {
+  text-decoration: line-through;
+}
+
 ol li ol {
   margin-bottom: 0;
 }
